@@ -1,2 +1,2 @@
 # HBM-Galacticraft-Companion
-A simple 1.12.2 minecraft mod attempting to make Galacticraft and HBM work together better.
+This mod is an attempt to make the "Galacticraft Legacy" and "HBM Nuclear Tech" mods more interdependent between eachother.
