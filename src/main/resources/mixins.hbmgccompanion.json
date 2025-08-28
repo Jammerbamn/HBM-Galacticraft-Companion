@@ -1,0 +1,12 @@
+{
+  "required": false,
+  "minVersion": "0.8",
+  "package": "jammerbam.hbmgccompanion.mixins",
+  "refmap": "mixins.hbmgccompanion.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "GCRefineryKeroseneOnlyMixin"
+  ],
+  "client": [],
+  "server": []
+}
