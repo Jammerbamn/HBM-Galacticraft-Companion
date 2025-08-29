@@ -8,6 +8,7 @@ HBM already had logic to take in the Galacticraft crude oil and convert it into 
 You are able to leave your world generation settings alone, although for the full experience. I would recommend turning off oil generation in Galaticraft. This can be found in: "config/Galacticraft/core.cfg". The section is: "D:"Oil Generation Factor"". set it to 0.
 
 The only mods this is compatible with is:
+
 Galacticraft Legacy
 https://github.com/TeamGalacticraft/Galacticraft-Legacy
 
