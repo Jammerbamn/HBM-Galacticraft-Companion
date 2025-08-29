@@ -1,0 +1,4 @@
+hbmgc.message.kerosene.name=Kerosene
+hbmgc.status.nokerosene.name=No Kerosene
+hbmgc.kerosene_tank.desc.0=Accepts Kerosene
+hbmgc.kerosene_tank.desc.1=Refines into Rocket Fuel

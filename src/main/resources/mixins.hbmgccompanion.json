@@ -7,6 +7,9 @@
   "mixins": [
     "GCRefineryKeroseneOnlyMixin"
   ],
-  "client": [],
+  "client": [
+    "GuiRefinery_KeroseneTextMixin",
+    "GuiRefinery_TextureSwapMixin",
+  ],
   "server": []
 }
