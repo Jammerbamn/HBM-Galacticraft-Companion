@@ -160,14 +160,15 @@ dependencies {
     compileOnly "mezz.jei:jei_1.12.2:4.16.1.1013:api"
     runtimeOnly "mezz.jei:jei_1.12.2:4.16.1.1013"
 
-    //Curseforge mods
+//Curseforge mods (DEV: deobf them!)
     compileOnly "curse.maven:galacticraft-564236:6364107"
-    compileOnly "curse.maven:hbm-708939:5254559"
-
     runtimeOnly "curse.maven:galacticraft-564236:6364107"
-    runtimeOnly "curse.maven:gcplanets-261990:5063201"
-    runtimeOnly "curse.maven:stevelib-296019:5064118"
-    runtimeOnly "curse.maven:hbm-708939:5254559"
+
+    compileOnly rfg.deobf("curse.maven:hbmce-1312314:7538547")
+    runtimeOnly rfg.deobf("curse.maven:hbmce-1312314:7538547")
+
+    runtimeOnly rfg.deobf("curse.maven:ctm-267602:2915363")
+
 }
 
 apply from: 'gradle/scripts/dependencies.gradle'
