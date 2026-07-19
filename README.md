@@ -4,7 +4,7 @@ This mod makes Galacticraft Legacy rely more heavily on HBM Nuclear Tech fuel pr
 ## Current Changes
 
 - Replaces GC oil with HBM Kerosene as a required input in the GC Refinery.
-- With HBM Community Edition, disables GC oil generation to rely on HBM oil processes.
+- Disables GC oil generation to rely on HBM oil processes.
 - With HBM Community Edition, adds compatibility for selected small HBM Launch Pads to accept GC rockets.
 - With HBM Community Edition, HBM Copper cable and GC Aluminum cable work for both mods.
 - With HBM Community Edition, HBM and GC energy are interchangeable.

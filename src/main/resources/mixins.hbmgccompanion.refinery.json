@@ -5,6 +5,7 @@
   "refmap": "mixins.hbmgccompanion.refmap.json",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "GCEventHandler_DisableOilGenerationMixin",
     "GCRefineryKeroseneOnlyMixin"
   ],
   "client": [

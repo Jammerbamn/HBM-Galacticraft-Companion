@@ -7,7 +7,6 @@
   "mixins": [
     "GCEntityAutoRocket_HBMPadReturnMixin",
     "GCEntityAutoRocket_LandingPadStorageMixin",
-    "GCEventHandler_DisableOilGenerationMixin",
     "GCRocket_HBMLaunchVentParticlesMixin",
     "GCContainerRocketInventory_LandingPadSlotMixin",
     "GCFluidLoader_HBMDummyCoreMixin",
