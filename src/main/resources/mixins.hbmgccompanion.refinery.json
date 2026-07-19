@@ -9,7 +9,7 @@
   ],
   "client": [
     "GuiRefinery_KeroseneTextMixin",
-    "GuiRefinery_TextureSwapMixin",
+    "GuiRefinery_TextureSwapMixin"
   ],
   "server": []
 }

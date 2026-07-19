@@ -4,6 +4,7 @@ import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IDrawableAnimated;
 import mezz.jei.api.gui.IDrawableStatic;
+import mezz.jei.api.gui.IGuiFluidStackGroup;
 import mezz.jei.api.gui.IGuiItemStackGroup;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
@@ -67,11 +68,14 @@ public class HBMGCRefineryRecipeCategory implements IRecipeCategory {
     @Override
     public void setRecipe(IRecipeLayout recipeLayout, IRecipeWrapper recipeWrapper, IIngredients ingredients) {
         IGuiItemStackGroup itemstacks = recipeLayout.getItemStacks();
+        IGuiFluidStackGroup fluidstacks = recipeLayout.getFluidStacks();
 
         itemstacks.init(0, true, 39, 2);
         itemstacks.init(1, false, 113, 2);
+        fluidstacks.init(0, true, 40, 24, 16, 38, 1000, false, null);
 
         itemstacks.set(ingredients);
+        fluidstacks.set(ingredients);
     }
 
     @Override

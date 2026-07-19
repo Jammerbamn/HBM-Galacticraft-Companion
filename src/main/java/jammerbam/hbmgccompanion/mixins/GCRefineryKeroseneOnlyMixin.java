@@ -1,10 +1,9 @@
 package jammerbam.hbmgccompanion.mixins;
 
+import jammerbam.hbmgccompanion.compat.HBMGCFluids;
 import micdoodle8.mods.galacticraft.core.tile.TileEntityRefinery;
 import micdoodle8.mods.galacticraft.core.util.FluidUtil;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -13,11 +12,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(value = TileEntityRefinery.class, remap = false)
 abstract class GCRefineryKeroseneOnlyMixin {
 
-    /** Return true iff the fluid is exactly HBM's kerosene */
     private static boolean isHBMKerosene(FluidStack fs) {
-        if (fs == null) return false;
-        final Fluid kerosene = FluidRegistry.getFluid("kerosene");
-        return kerosene != null && fs.getFluid() == kerosene;
+        return HBMGCFluids.isKerosene(fs);
     }
 
     // 1) Inventory → tank: restrict FluidUtil.isOil(liquid)
@@ -41,7 +37,7 @@ abstract class GCRefineryKeroseneOnlyMixin {
             )
     )
     private boolean hbmgc$onlyKeroseneOnPipe(String name) {
-        return "kerosene".equals(name);
+        return HBMGCFluids.isKeroseneName(name);
     }
 
     // 3) Insertable items: restrict FluidUtil.isOilContainerAny(stack)

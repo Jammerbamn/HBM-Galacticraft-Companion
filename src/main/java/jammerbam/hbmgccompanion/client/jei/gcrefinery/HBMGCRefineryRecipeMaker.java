@@ -1,5 +1,6 @@
 package jammerbam.hbmgccompanion.client.jei.gcrefinery;
 
+import jammerbam.hbmgccompanion.compat.HBMGCFluids;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +11,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
@@ -32,6 +32,12 @@ public class HBMGCRefineryRecipeMaker {
         // Outputs (Galacticraft)
         final ItemStack gcFuelCan = new ItemStack(GCItems.fuelCanister, 1, 1);
         final ItemStack gcFuelBucket = new ItemStack(GCItems.bucketFuel);
+
+        final Fluid kerosene = resolveKerosene();
+        if (kerosene != null) {
+            addFluid(recipes, new FluidStack(kerosene, 1000), gcFuelCan);
+            addFluid(recipes, new FluidStack(kerosene, 1000), gcFuelBucket);
+        }
 
         // Optional: show the HBM "fluid_icon" kerosene variant as an example input (if present)
         final ItemStack keroseneIcon = findKeroseneFluidIconStack();
@@ -64,7 +70,7 @@ public class HBMGCRefineryRecipeMaker {
      * Prefer Forge registry. Optional fallback to EE field via reflection (no import).
      */
     private static Fluid resolveKerosene() {
-        Fluid f = FluidRegistry.getFluid("kerosene");
+        Fluid f = HBMGCFluids.getKerosene();
         if (f != null) return f;
 
         // Optional EE fallback if the fluid isn't registered under the plain name.
@@ -104,7 +110,7 @@ public class HBMGCRefineryRecipeMaker {
         for (ItemStack s : variants) {
             if (s == null || s.isEmpty()) continue;
             String name = safeLower(s.getDisplayName());
-            if (name.contains("kerosene")) return s.copy();
+            if (name.contains(HBMGCFluids.KEROSENE)) return s.copy();
         }
 
         // 2) Fallback: bounded meta scan (some items don’t enumerate variants)
@@ -112,7 +118,7 @@ public class HBMGCRefineryRecipeMaker {
             ItemStack s = new ItemStack(icon, 1, meta);
             if (s.isEmpty()) continue;
             String name = safeLower(s.getDisplayName());
-            if (name.contains("kerosene")) return s;
+            if (name.contains(HBMGCFluids.KEROSENE)) return s;
         }
 
         return ItemStack.EMPTY;

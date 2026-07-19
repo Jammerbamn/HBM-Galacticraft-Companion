@@ -1,0 +1,31 @@
+{
+  "required": false,
+  "minVersion": "0.8",
+  "package": "jammerbam.hbmgccompanion.mixins",
+  "refmap": "mixins.hbmgccompanion.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "GCEntityAutoRocket_HBMPadReturnMixin",
+    "GCEntityAutoRocket_LandingPadStorageMixin",
+    "GCEventHandler_DisableOilGenerationMixin",
+    "GCRocket_HBMLaunchVentParticlesMixin",
+    "GCContainerRocketInventory_LandingPadSlotMixin",
+    "GCFluidLoader_HBMDummyCoreMixin",
+    "HBMFluids_GCFuelRegistrationMixin",
+    "HBMCopperCable_GCConductorMixin",
+    "HBMLaunchPadLargeContainer_GCRocketSlotMixin",
+    "HBMLaunchPad_RocketPlacementMixin",
+    "HBMLaunchPadBase_GCFuelableMixin",
+    "HBMLaunchPadBase_GCElectricalMixin",
+    "HBMProxyCombo_GCElectricalMixin",
+    "HBMRustedLaunchPadContainer_GCRocketSlotMixin",
+    "HBMRustedLaunchPad_FuelableMixin",
+    "HBMRustedLaunchPad_RocketPlacementMixin"
+  ],
+  "client": [
+    "GCGuiRocketInventory_TextureAndTooltipMixin",
+    "HBMLaunchPadLarge_GCRocketPreviewMixin",
+    "HBMLaunchPadRusted_GCRocketPreviewMixin"
+  ],
+  "server": []
+}

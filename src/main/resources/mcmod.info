@@ -11,7 +11,7 @@
 	"logoFile": "${mod_logo_path}",
 	"dependencies": [
 	 "required-after:mixinbooter@[${mixin_booter_version},)",
-	 "after:hbm",
-	 "after:galacticraftcore|galacticraftlegacy"
+	 "required-after:hbm",
+	 "required-after:galacticraftcore"
 	 ]
 }]

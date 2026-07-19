@@ -1,18 +1,31 @@
 # HBM-Galacticraft-Companion
-This mod is an attempt to make the "Galacticraft Legacy" and "HBM Nuclear Tech" mods more interdependent between eachother.
+This mod makes Galacticraft Legacy rely more heavily on HBM Nuclear Tech fuel processing and infrastructure.
 
-Currently the only thing this mod changes is the Galacticraft's Refinery input to take Kerosene from HBM.
+## Current Changes
 
-HBM already had logic to take in the Galacticraft crude oil and convert it into HBM crude oil using the fluid boiler. This can then be used in the refinery and necessary steps to create HBM kerosene.
+- Replaces GC oil with HBM Kerosene as a required input in the GC Refinery.
+- With HBM Community Edition, disables GC oil generation to rely on HBM oil processes.
+- With HBM Community Edition, adds compatibility for selected small HBM Launch Pads to accept GC rockets.
+- With HBM Community Edition, HBM Copper cable and GC Aluminum cable work for both mods.
+- With HBM Community Edition, HBM and GC energy are interchangeable.
+- With HBM Community Edition, restores first person view when exiting GC vehicles.
 
-You are able to leave your world generation settings alone, although for the full experience. I would recommend turning off oil generation in Galaticraft. This can be found in: "config/Galacticraft/core.cfg". The section is: "D:"Oil Generation Factor"". set it to 0.
+## Planned Changes
 
-The only mods this is compatible with is:
+- Change certain crafting recipes to run through the HBM Assembler.
 
-Galacticraft Legacy
-https://github.com/TeamGalacticraft/Galacticraft-Legacy
+## Disclaimers
 
-and
+For worlds that are already generated and GC oil is present, HBM CE will accept the oil in the fluid boiler to convert it to HBM oil.  
+Currently, Extended Edition support is limited to the Galacticraft refinery kerosene replacement. Pad, cable, fuel, and launch compatibility are Community Edition only.  
 
-HBM Nuclear Tech-Extended Edition
-https://github.com/Alcatergit/Hbm-s-Nuclear-Tech-GIT
+Mods required for this mod:
+
+[HBM Nuclear Tech: Community Edition](https://github.com/Warfactory-Official/Hbm-s-Nuclear-Tech-CE)  
+or  
+[HBM Nuclear Tech: Extended Edition](https://github.com/Alcatergit/Hbm-s-Nuclear-Tech-GIT)  
+
+and  
+
+[Galacticraft Legacy](https://github.com/TeamGalacticraft/Galacticraft-Legacy)
+
