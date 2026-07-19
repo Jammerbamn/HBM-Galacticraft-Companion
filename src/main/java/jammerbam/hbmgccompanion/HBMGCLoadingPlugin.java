@@ -91,7 +91,7 @@ public final class HBMGCLoadingPlugin implements ILateMixinLoader {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-        if (event.getSide() == Side.CLIENT && areClassesPresent(CE_LAUNCH_PAD_CLASSES)) {
+        if (event.getSide() == Side.CLIENT && isAnyLoaded(GC_IDS) && isAnyLoaded(HBM_IDS)) {
             MinecraftForge.EVENT_BUS.register(new GalacticraftCameraRestoreHandler());
         }
     }

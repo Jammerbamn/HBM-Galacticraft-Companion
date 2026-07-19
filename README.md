@@ -8,7 +8,7 @@ This mod makes Galacticraft Legacy rely more heavily on HBM Nuclear Tech fuel pr
 - With HBM Community Edition, adds compatibility for selected small HBM Launch Pads to accept GC rockets.
 - With HBM Community Edition, HBM Copper cable and GC Aluminum cable work for both mods.
 - With HBM Community Edition, HBM and GC energy are interchangeable.
-- With HBM Community Edition, restores first person view when exiting GC vehicles.
+- Restores first person view when exiting GC vehicles.
 
 ## Planned Changes
 
@@ -16,7 +16,7 @@ This mod makes Galacticraft Legacy rely more heavily on HBM Nuclear Tech fuel pr
 
 ## Disclaimers
 
-For worlds that are already generated and GC oil is present, HBM CE will accept the oil in the fluid boiler to convert it to HBM oil.  
+For worlds that are already generated and GC oil is present, HBM will accept the oil in the fluid boiler to convert it to HBM oil.  
 Currently, Extended Edition support is limited to the Galacticraft refinery kerosene replacement. Pad, cable, fuel, and launch compatibility are Community Edition only.  
 
 Mods required for this mod:
