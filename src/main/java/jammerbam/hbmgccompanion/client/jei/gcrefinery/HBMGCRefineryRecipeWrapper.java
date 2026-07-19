@@ -4,22 +4,21 @@ import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
 
 public class HBMGCRefineryRecipeWrapper implements IRecipeWrapper {
 
-    private final FluidStack inputFluid;
+    private final ItemStack inputItem;
     private final ItemStack outputItem;
 
-    public HBMGCRefineryRecipeWrapper(FluidStack inputFluid, ItemStack outputItem) {
-        this.inputFluid = inputFluid;
+    public HBMGCRefineryRecipeWrapper(ItemStack inputItem, ItemStack outputItem) {
+        this.inputItem = inputItem;
         this.outputItem = outputItem;
     }
 
     @Override
     public void getIngredients(IIngredients ingredients) {
-        if (inputFluid != null && inputFluid.getFluid() != null) {
-            ingredients.setInput(VanillaTypes.FLUID, inputFluid);
+        if (inputItem != null && !inputItem.isEmpty()) {
+            ingredients.setInput(VanillaTypes.ITEM, inputItem);
         }
 
         if (outputItem != null && !outputItem.isEmpty()) {
