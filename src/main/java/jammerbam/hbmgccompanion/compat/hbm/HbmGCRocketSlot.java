@@ -12,7 +12,7 @@ public class HbmGCRocketSlot extends SlotItemHandler {
 
     @Override
     public boolean isItemValid(ItemStack stack) {
-        return GalacticraftRocketFactory.isSupportedRocket(stack);
+        return GalacticraftRocketFactory.isSupportedRocket(stack) || super.isItemValid(stack);
     }
 
     @Override

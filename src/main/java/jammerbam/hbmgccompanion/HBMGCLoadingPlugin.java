@@ -10,7 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import zone.rong.mixinbooter.ILateMixinLoader;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -24,6 +24,7 @@ public final class HBMGCLoadingPlugin implements ILateMixinLoader {
     private static final Logger LOG = LogManager.getLogger("hbmgccompanion");
     private static final String REFINERY_MIXINS = "mixins.hbmgccompanion.refinery.json";
     private static final String CE_MIXINS = "mixins.hbmgccompanion.ce.json";
+    private static final String EE_MIXINS = "mixins.hbmgccompanion.ee.json";
 
     // Cover common mod IDs across the 1.12.2 forks/variants.
     private static final String[] GC_IDS  = { "galacticraftcore", "galacticraftlegacy" };
@@ -32,11 +33,18 @@ public final class HBMGCLoadingPlugin implements ILateMixinLoader {
             "com.hbm.tileentity.bomb.TileEntityLaunchPadBase",
             "com.hbm.tileentity.bomb.TileEntityLaunchPadRusted"
     };
+    private static final String[] EE_LAUNCH_PAD_CLASSES = {
+            "com.hbm.tileentity.bomb.TileEntityLaunchPad",
+            "com.hbm.inventory.container.ContainerLaunchPadTier1"
+    };
 
     @Override
     public List<String> getMixinConfigs() {
-        // Paths are relative to the resources root.
-        return Arrays.asList(REFINERY_MIXINS, CE_MIXINS);
+        List<String> configs = new ArrayList<>();
+        addMixinConfigIfPresent(configs, REFINERY_MIXINS);
+        addMixinConfigIfPresent(configs, CE_MIXINS);
+        addMixinConfigIfPresent(configs, EE_MIXINS);
+        return configs;
     }
 
     @Override
@@ -65,6 +73,17 @@ public final class HBMGCLoadingPlugin implements ILateMixinLoader {
             return true;
         }
 
+        if (EE_MIXINS.equals(mixinConfig)) {
+            boolean eeLaunchPadsPresent = areClassesPresent(EE_LAUNCH_PAD_CLASSES);
+            if (!eeLaunchPadsPresent) {
+                LOG.info("Skipping {} (HBM EE launch pad classes not detected; refinery compatibility only).", mixinConfig);
+                return false;
+            }
+
+            LOG.info("Queuing {} (HBM EE launch pad classes detected).", mixinConfig);
+            return true;
+        }
+
         return false;
     }
 
@@ -78,15 +97,27 @@ public final class HBMGCLoadingPlugin implements ILateMixinLoader {
     }
 
     private static boolean areClassesPresent(String[] classNames) {
+        ClassLoader classLoader = HBMGCLoadingPlugin.class.getClassLoader();
         for (String className : classNames) {
             try {
-                Class.forName(className, false, HBMGCLoadingPlugin.class.getClassLoader());
+                String classResource = className.replace('.', '/') + ".class";
+                if (classLoader.getResource(classResource) == null) {
+                    return false;
+                }
             } catch (Throwable ignored) {
                 return false;
             }
         }
 
         return true;
+    }
+
+    private static void addMixinConfigIfPresent(List<String> configs, String mixinConfig) {
+        if (HBMGCLoadingPlugin.class.getClassLoader().getResource(mixinConfig) != null) {
+            configs.add(mixinConfig);
+        } else {
+            LOG.debug("Skipping missing mixin config resource {}.", mixinConfig);
+        }
     }
 
     @Mod.EventHandler

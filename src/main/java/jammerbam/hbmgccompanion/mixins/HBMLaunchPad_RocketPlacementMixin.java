@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(value = LaunchPad.class, remap = false)
 abstract class HBMLaunchPad_RocketPlacementMixin {
 
-    @Inject(method = "func_180639_a", at = @At("HEAD"), cancellable = true)
+    @Inject(method = { "onBlockActivated", "func_180639_a" }, at = @At("HEAD"), cancellable = true)
     private void hbmgc$placeTier1Rocket(
             World world,
             BlockPos pos,

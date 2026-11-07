@@ -2,8 +2,10 @@ package jammerbam.hbmgccompanion.mixins;
 
 import com.hbm.tileentity.network.energy.TileEntityCableBaseNT;
 import com.hbm.api.energymk2.Nodespace;
+import com.hbm.api.energymk2.IEnergyHandlerMK2;
 import com.hbm.api.energymk2.PowerNetMK2;
 import com.hbm.config.GeneralConfig;
+import com.hbm.lib.ForgeDirection;
 import micdoodle8.mods.galacticraft.api.transmission.NetworkType;
 import micdoodle8.mods.galacticraft.api.transmission.grid.IElectricityNetwork;
 import micdoodle8.mods.galacticraft.api.transmission.grid.IGridNetwork;
@@ -22,6 +24,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = TileEntityCableBaseNT.class, remap = false)
 abstract class HBMCopperCable_GCConductorMixin implements IConductor {
@@ -37,6 +40,9 @@ abstract class HBMCopperCable_GCConductorMixin implements IConductor {
 
     @Unique
     private TileEntity[] hbmgc$adjacentConnections;
+
+    @Unique
+    private TileEntity[] hbmgc$renderNeighbors;
 
     @Override
     public int getTierGC() {
@@ -77,6 +83,8 @@ abstract class HBMCopperCable_GCConductorMixin implements IConductor {
                     for (EnumFacing side : EnumFacing.VALUES) {
                         TileEntity adjacent = world.getTileEntity(self.getPos().offset(side));
                         if (adjacent instanceof IConnector
+                                && !(adjacent instanceof IEnergyHandlerMK2)
+                                && !(adjacent instanceof IConductor && !(adjacent instanceof TileEntityCableBaseNT))
                                 && ((IConnector) adjacent).canConnect(side.getOpposite(), NetworkType.POWER)) {
                             this.hbmgc$adjacentConnections[side.ordinal()] = adjacent;
                         }
@@ -101,7 +109,8 @@ abstract class HBMCopperCable_GCConductorMixin implements IConductor {
 
         for (EnumFacing side : EnumFacing.VALUES) {
             TileEntity adjacent = world.getTileEntity(self.getPos().offset(side));
-            if (!(adjacent instanceof IConductor)
+            if (!(adjacent instanceof TileEntityCableBaseNT)
+                    || !(adjacent instanceof IConductor)
                     || !((IConductor) adjacent).canConnect(side.getOpposite(), NetworkType.POWER)) {
                 continue;
             }
@@ -120,7 +129,13 @@ abstract class HBMCopperCable_GCConductorMixin implements IConductor {
 
     @Override
     public boolean canConnect(EnumFacing direction, NetworkType type) {
-        return type == NetworkType.POWER && hbmgc$isCopperCable();
+        if (type != NetworkType.POWER || !hbmgc$isCopperCable()) {
+            return false;
+        }
+
+        TileEntity self = hbmgc$self();
+        TileEntity adjacent = self.getWorld().getTileEntity(self.getPos().offset(direction));
+        return !(adjacent instanceof IConductor && !(adjacent instanceof TileEntityCableBaseNT));
     }
 
     @Override
@@ -133,12 +148,25 @@ abstract class HBMCopperCable_GCConductorMixin implements IConductor {
         return hbmgc$isCopperCable();
     }
 
+    @Inject(method = "canConnect", at = @At("HEAD"), cancellable = true)
+    private void hbmgc$disconnectGCWireFromHBMNetwork(ForgeDirection direction, CallbackInfoReturnable<Boolean> cir) {
+        if (!hbmgc$isCopperCable() || direction == ForgeDirection.UNKNOWN) {
+            return;
+        }
+
+        TileEntity self = hbmgc$self();
+        TileEntity adjacent = self.getWorld().getTileEntity(self.getPos().offset(direction.toEnumFacing()));
+        if (adjacent instanceof IConductor && !(adjacent instanceof TileEntityCableBaseNT)) {
+            cir.setReturnValue(false);
+        }
+    }
+
     @Inject(method = "onLoad", at = @At("RETURN"))
     private void hbmgc$refreshGCNetworkOnLoad(CallbackInfo ci) {
         hbmgc$refreshNetworkIfServer();
     }
 
-    @Inject(method = "func_73660_a", at = @At("RETURN"))
+    @Inject(method = { "update", "func_73660_a" }, at = @At("RETURN"))
     private void hbmgc$refreshGCNetworkOnTick(CallbackInfo ci) {
         TileEntity self = hbmgc$self();
         World world = self.getWorld();
@@ -147,10 +175,11 @@ abstract class HBMCopperCable_GCConductorMixin implements IConductor {
 
         if (world != null && world.getTotalWorldTime() % 20L == 0L) {
             hbmgc$refreshNetworkIfServer();
+            hbmgc$refreshClientConnections();
         }
     }
 
-    @Inject(method = "func_145843_s", at = @At("HEAD"))
+    @Inject(method = { "invalidate", "func_145843_s" }, at = @At("HEAD"))
     private void hbmgc$splitGCNetworkOnInvalidate(CallbackInfo ci) {
         TileEntity self = hbmgc$self();
         World world = self.getWorld();
@@ -171,6 +200,33 @@ abstract class HBMCopperCable_GCConductorMixin implements IConductor {
     }
 
     @Unique
+    private void hbmgc$refreshClientConnections() {
+        TileEntity self = hbmgc$self();
+        World world = self.getWorld();
+        if (world == null || !world.isRemote || !this.canTransmit()) {
+            return;
+        }
+
+        if (this.hbmgc$renderNeighbors == null) {
+            this.hbmgc$renderNeighbors = new TileEntity[6];
+        }
+
+        boolean changed = false;
+        for (EnumFacing side : EnumFacing.VALUES) {
+            TileEntity adjacent = world.getTileEntity(self.getPos().offset(side));
+            if (this.hbmgc$renderNeighbors[side.ordinal()] != adjacent) {
+                this.hbmgc$renderNeighbors[side.ordinal()] = adjacent;
+                changed = true;
+            }
+        }
+
+        if (changed) {
+            this.hbmgc$adjacentConnections = null;
+            ((TileEntityCableBaseNT) (Object) this).invalidateConnectionCache();
+        }
+    }
+
+    @Unique
     private void hbmgc$transferGCPowerToGCNetwork() {
         TileEntity self = hbmgc$self();
         World world = self.getWorld();
@@ -180,12 +236,15 @@ abstract class HBMCopperCable_GCConductorMixin implements IConductor {
 
         for (EnumFacing side : EnumFacing.VALUES) {
             TileEntity adjacent = world.getTileEntity(self.getPos().offset(side));
-            if (!(adjacent instanceof IElectrical)) {
+            if (!(adjacent instanceof IElectrical) || adjacent instanceof IEnergyHandlerMK2) {
                 continue;
             }
 
             IElectrical electrical = (IElectrical) adjacent;
             EnumFacing outputSide = side.getOpposite();
+            if (!electrical.canConnect(outputSide, NetworkType.POWER)) {
+                continue;
+            }
             float availableGC = electrical.getProvide(outputSide);
             if (availableGC <= 0.0F) {
                 continue;
@@ -230,12 +289,15 @@ abstract class HBMCopperCable_GCConductorMixin implements IConductor {
 
         for (EnumFacing side : EnumFacing.VALUES) {
             TileEntity adjacent = world.getTileEntity(self.getPos().offset(side));
-            if (!(adjacent instanceof IElectrical)) {
+            if (!(adjacent instanceof IElectrical) || adjacent instanceof IEnergyHandlerMK2) {
                 continue;
             }
 
             IElectrical electrical = (IElectrical) adjacent;
             EnumFacing inputSide = side.getOpposite();
+            if (!electrical.canConnect(inputSide, NetworkType.POWER)) {
+                continue;
+            }
             float requestedGC = electrical.getRequest(inputSide);
             if (requestedGC <= 0.0F) {
                 continue;

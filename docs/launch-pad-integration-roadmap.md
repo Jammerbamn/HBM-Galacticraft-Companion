@@ -2,6 +2,16 @@
 
 This roadmap tracks the next major project goal: allowing selected HBM Community Edition launch pads to fuel and launch Galacticraft Legacy rockets.
 
+## Current Integration
+
+- `gradle.properties` currently selects `hbm_dev_target = ee`. The build produces one HBM variant at a time; `build.gradle` includes the matching dependency and mixins.
+- EE supports the 3x3 `hbm:launch_pad` with a Galacticraft Tier 1 rocket. CE supports `hbm:launch_pad` and `hbm:launch_pad_rusted`.
+- Shared code handles rocket placement, the pad inventory link, Galacticraft landing pad return, fuel loader relay, launch effects, and rocket cleanup. Variant-specific mixins handle HBM's different tile entities and energy APIs.
+- Both `-Phbm_dev_target=ce build` and the configured EE `build` compile. Runtime verification is still needed after shared changes.
+- In-game checks: place and remove a rocket through the pad slot; fuel it from the GC loader; launch with and without GC landing pads in the rocket slot; break the HBM pad with a rocket on it; destroy the rocket while leaving the pad intact; confirm a GC rocket near an HBM pad keeps its normal GUI and exhaust. Check whether a rocket destroyed on the pad retains custom item metadata in Galacticraft's drop.
+
+The phases below record the original CE implementation path and are retained as project history.
+
 ## Current Baseline
 
 - The project targets Minecraft 1.12.2.

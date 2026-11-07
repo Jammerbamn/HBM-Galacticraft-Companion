@@ -23,7 +23,7 @@ abstract class HBMRustedLaunchPad_FuelableMixin implements IFuelable {
         return HbmRocketFuelRelay.removeFuel((TileEntityLaunchPadRusted) (Object) this, amount);
     }
 
-    @Inject(method = "func_73660_a", at = @At("RETURN"))
+    @Inject(method = { "update", "func_73660_a" }, at = @At("RETURN"))
     private void hbmgc$syncInventoryRocket(CallbackInfo ci) {
         HbmRocketInventoryLaunchService.syncRustedPad((TileEntityLaunchPadRusted) (Object) this);
     }

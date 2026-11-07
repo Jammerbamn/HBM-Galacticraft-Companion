@@ -116,7 +116,7 @@ abstract class GCEntityAutoRocket_LandingPadStorageMixin implements RocketLandin
 
     @Inject(method = "onLaunch", at = @At("HEAD"))
     private void hbmgc$clearPadInventoryRocketOnLaunch(CallbackInfo ci) {
-        HbmRocketInventoryLaunchService.clearSourceSlotOnLaunch((EntityAutoRocket) (Object) this);
+        HbmRocketInventoryLaunchService.clearSourceSlotWhenRocketLeavesPad((EntityAutoRocket) (Object) this);
     }
 
     @Inject(method = "getItemsDropped", at = @At("RETURN"))

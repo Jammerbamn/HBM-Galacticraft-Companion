@@ -1,15 +1,13 @@
 package jammerbam.hbmgccompanion.compat.hbm;
 
-import com.hbm.blocks.BlockDummyable;
-import com.hbm.tileentity.bomb.TileEntityLaunchPadRusted;
 import micdoodle8.mods.galacticraft.api.prefab.entity.EntityAutoRocket;
-import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
+import jammerbam.hbmgccompanion.compat.galacticraft.RocketPadInventorySource;
 
 import java.util.List;
 
@@ -18,25 +16,30 @@ public final class HbmRocketFuelRelay {
     }
 
     public static TileEntity resolveAdjacentFuelableCore(World world, BlockPos origin, EnumFacing side, TileEntity direct) {
-        if (direct != null) {
+        if (world == null || origin == null || side == null) {
             return direct;
         }
 
         BlockPos adjacentPos = origin.offset(side);
-        Block block = world.getBlockState(adjacentPos).getBlock();
-        if (block instanceof BlockDummyable) {
-            return ((BlockDummyable) block).findCoreTE(world, adjacentPos);
+        TileEntity padCore = HbmRocketPadAdapters.findPadTileNear(world, adjacentPos, 2, 1);
+        if (padCore != null) {
+            return padCore;
         }
 
-        return null;
+        return direct;
     }
 
-    public static int addFuel(TileEntityLaunchPadRusted pad, FluidStack fuel, boolean doFill) {
+    public static int addFuel(TileEntity pad, FluidStack fuel, boolean doFill) {
         EntityAutoRocket rocket = findRocket(pad);
+        if (rocket == null) {
+            HbmRocketInventoryLaunchService.syncPad(pad);
+            rocket = findRocket(pad);
+        }
+
         return rocket == null ? 0 : rocket.addFuel(fuel, doFill);
     }
 
-    public static FluidStack removeFuel(TileEntityLaunchPadRusted pad, int amount) {
+    public static FluidStack removeFuel(TileEntity pad, int amount) {
         EntityAutoRocket rocket = findRocket(pad);
         return rocket == null ? null : rocket.removeFuel(amount);
     }
@@ -60,6 +63,17 @@ public final class HbmRocketFuelRelay {
                 bounds
         );
 
+        for (EntityAutoRocket rocket : rockets) {
+            if (rocket instanceof RocketPadInventorySource) {
+                RocketPadInventorySource source = (RocketPadInventorySource) rocket;
+                if (source.hbmgc$hasPadInventorySource()
+                        && source.hbmgc$getPadInventorySourceDimension() == pad.getWorld().provider.getDimension()
+                        && pad.getPos().equals(source.hbmgc$getPadInventorySourcePos())) {
+                    return rocket;
+                }
+            }
+        }
+
         return rockets.isEmpty() ? null : rockets.get(0);
     }
 
@@ -79,4 +93,5 @@ public final class HbmRocketFuelRelay {
                 corePos.getZ() + maxHorizontal
         );
     }
+
 }

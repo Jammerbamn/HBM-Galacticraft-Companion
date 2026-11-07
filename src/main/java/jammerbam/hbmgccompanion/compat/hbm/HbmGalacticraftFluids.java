@@ -62,7 +62,7 @@ public final class HbmGalacticraftFluids {
     private static void registerGCFuelType() {
         Fluid forgeFuel = getGCFuelFluid();
         if (forgeFuel == null) {
-            LOG.warn("Skipping HBM GC fuel registration because Galacticraft fuel is not registered yet.");
+            LOG.debug("Deferring HBM GC fuel registration until Galacticraft fuel is registered.");
             return;
         }
 

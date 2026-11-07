@@ -10,7 +10,7 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.9'
-    id 'com.gtnewhorizons.retrofuturagradle' version '1.4.1'
+    id 'com.gtnewhorizons.retrofuturagradle' version '1.4.9'
     id 'com.matthewprenger.cursegradle' version '1.4.0' apply false
     id 'com.modrinth.minotaur' version '2.+' apply false
     id 'org.jetbrains.changelog' version '2.2.1'
@@ -40,9 +40,14 @@ setDefaultProperty 'minecraft_username', true, 'Developer'
 setDefaultProperty 'extra_jvm_args', false, ''
 setDefaultProperty 'extra_tweak_classes', false, ''
 setDefaultProperty 'change_minecraft_sources', false, false
+setDefaultProperty 'hbm_dev_target', true, 'ce'
 
 version = propertyString('mod_version')
 group = propertyString('root_package')
+def hbmDevTarget = propertyString('hbm_dev_target').toLowerCase(Locale.ROOT)
+if (!['ce', 'ee'].contains(hbmDevTarget)) {
+    throw new GradleException("Unsupported hbm_dev_target '${hbmDevTarget}'. Use 'ce' or 'ee'.")
+}
 
 base {
     archivesName.set(propertyString('mod_id'))
@@ -67,6 +72,20 @@ java {
 configurations {
     embed
     implementation.extendsFrom(embed)
+    hbmCeCompile
+    hbmEeCompile
+    compileOnly.extendsFrom(hbmCeCompile)
+    runtimeOnly.extendsFrom(configurations[hbmDevTarget == 'ee' ? 'hbmEeCompile' : 'hbmCeCompile'])
+}
+
+sourceSets {
+    eeCompat {
+        java {
+            srcDir 'src/main/java'
+            include 'jammerbam/hbmgccompanion/mixins/EEHbm*.java'
+            include 'jammerbam/hbmgccompanion/mixins/EEHBM*.java'
+        }
+    }
 }
 
 minecraft {
@@ -169,12 +188,21 @@ dependencies {
     compileOnly "curse.maven:galacticraft-564236:6364107"
     runtimeOnly "curse.maven:galacticraft-564236:6364107"
 
-    compileOnly rfg.deobf("curse.maven:hbm-nuclear-tech-mod-community-edition-1312314:8330665")
-    runtimeOnly rfg.deobf("curse.maven:hbm-nuclear-tech-mod-community-edition-1312314:8330665")
+    hbmCeCompile rfg.deobf("curse.maven:hbm-nuclear-tech-mod-community-edition-1312314:8873889")
+    hbmEeCompile rfg.deobf("curse.maven:hbms-nuclear-tech-mod-extended-edition-708939:7234087")
 
     runtimeOnly rfg.deobf("curse.maven:ctm-267602:2915363")
 
 }
+
+sourceSets.main.java {
+    exclude 'jammerbam/hbmgccompanion/mixins/EEHbm*.java'
+    exclude 'jammerbam/hbmgccompanion/mixins/EEHBM*.java'
+}
+
+sourceSets.eeCompat.compileClasspath = sourceSets.main.output +
+        (sourceSets.main.compileClasspath - configurations.hbmCeCompile) + configurations.hbmEeCompile
+sourceSets.main.runtimeClasspath += sourceSets.eeCompat.output
 
 apply from: 'gradle/scripts/dependencies.gradle'
 
@@ -254,7 +282,10 @@ jar {
     }
     // Add all embedded dependencies into the jar
     from(provider{ configurations.embed.collect {it.isDirectory() ? it : zipTree(it)} })
+    from(sourceSets.eeCompat.output)
 }
+
+sourcesJar.from(sourceSets.eeCompat.allSource)
 
 idea {
     module {

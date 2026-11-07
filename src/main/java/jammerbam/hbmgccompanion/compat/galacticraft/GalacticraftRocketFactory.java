@@ -14,7 +14,7 @@ public final class GalacticraftRocketFactory {
     }
 
     public static boolean isSupportedRocket(ItemStack stack) {
-        return isTier1Rocket(stack);
+        return isTier1Rocket(stack) && getRocketType(stack) != null;
     }
 
     public static EntityAutoRocket createRocket(World world, ItemStack stack, double x, double y, double z) {

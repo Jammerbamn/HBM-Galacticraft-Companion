@@ -19,7 +19,7 @@ public final class HbmLaunchVentParticleService {
     }
 
     public static boolean replaceCountdownParticles(EntityAutoRocket rocket, boolean launched) {
-        if (rocket == null || rocket.isDead || !isRocketOnHbmPad(rocket)) {
+        if (rocket == null || rocket.isDead || !isRocketOnHbmPad(rocket, launched)) {
             return false;
         }
 
@@ -35,8 +35,9 @@ public final class HbmLaunchVentParticleService {
         return true;
     }
 
-    private static boolean isRocketOnHbmPad(EntityAutoRocket rocket) {
-        return hasPadSourceInThisWorld(rocket) || GalacticraftLaunchPadReturnService.isRocketOnHbmPad(rocket);
+    private static boolean isRocketOnHbmPad(EntityAutoRocket rocket, boolean launched) {
+        return GalacticraftLaunchPadReturnService.isRocketOnHbmPad(rocket)
+                || launched && rocket.timeSinceLaunch <= CENTER_PLUME_LINGER_TICKS && hasPadSourceInThisWorld(rocket);
     }
 
     private static boolean hasPadSourceInThisWorld(EntityAutoRocket rocket) {
@@ -47,7 +48,9 @@ public final class HbmLaunchVentParticleService {
         RocketPadInventorySource source = (RocketPadInventorySource) rocket;
         return source.hbmgc$hasPadInventorySource()
                 && rocket.getEntityWorld() != null
-                && rocket.getEntityWorld().provider.getDimension() == source.hbmgc$getPadInventorySourceDimension();
+                && rocket.getEntityWorld().provider.getDimension() == source.hbmgc$getPadInventorySourceDimension()
+                && Math.abs(rocket.posX - source.hbmgc$getPadInventorySourcePos().getX() - 0.5D) < 1.0D
+                && Math.abs(rocket.posZ - source.hbmgc$getPadInventorySourcePos().getZ() - 0.5D) < 1.0D;
     }
 
     private static void spawnSideVentParticles(EntityAutoRocket rocket) {
@@ -94,9 +97,14 @@ public final class HbmLaunchVentParticleService {
     }
 
     private static BlockPos getPadPos(EntityAutoRocket rocket) {
+        BlockPos currentPad = GalacticraftLaunchPadReturnService.findPadUnderRocket(rocket);
+        if (currentPad != null) {
+            return currentPad;
+        }
+
         if (rocket instanceof RocketPadInventorySource) {
             RocketPadInventorySource source = (RocketPadInventorySource) rocket;
-            if (source.hbmgc$hasPadInventorySource()) {
+            if (source.hbmgc$hasPadInventorySource() && hasPadSourceInThisWorld(rocket)) {
                 return source.hbmgc$getPadInventorySourcePos();
             }
         }

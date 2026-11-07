@@ -67,13 +67,13 @@ abstract class HBMLaunchPadBase_GCFuelableMixin implements IFuelable {
         }
     }
 
-    @Inject(method = "func_73660_a", at = @At("HEAD"))
+    @Inject(method = { "update", "func_73660_a" }, at = @At("HEAD"))
     private void hbmgc$prepareGCFuelTanks(CallbackInfo ci) {
         HbmRocketInventoryLaunchService.syncFullPad((TileEntityLaunchPadBase) (Object) this);
         HbmFullLaunchPadFuelService.prepareFuelTanks((TileEntityLaunchPadBase) (Object) this, this.tanks);
     }
 
-    @Inject(method = "func_73660_a", at = @At("RETURN"))
+    @Inject(method = { "update", "func_73660_a" }, at = @At("RETURN"))
     private void hbmgc$fuelGCRocketFromPadTanks(CallbackInfo ci) {
         long power = this.getPower();
         long used = HbmFullLaunchPadFuelService.fuelRocketFromPad(
